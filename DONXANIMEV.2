@@ -1,0 +1,115 @@
+getgenv().AutoClick = false;
+getgenv().AutoRebirth = false;
+getgenv().AutoHatch = false;
+getgenv().AutoWorlds = false;
+
+local RemotePath = game:GetService("ReplicatedStorage").Remotes
+
+function doTap()
+spawn(function()
+while getgenv()..AutoClick == true do
+local args = { [1] = false,[2] = "Clicker!"}
+RemotePath.ClickRemote:FireServer(unpack(args))
+   wait()
+    end
+end)
+end
+
+function AutoRebirth(RebirthAmount)
+spawn(function()
+while getgenv().AutoRebirth == true do
+local args = {[1] = RebirthAmount}
+RemotePath.RebirthRemote:FireServer(unpack(args))
+wait()
+end
+end)
+end
+
+function AutoHatch(EggType)
+spawn(function()
+while getgenv().AutoHatch == true do
+local args = {[1] = EggType,[2] = false,[3] = false}
+RemotePath.OpenEgg:InvokeServer(unpack(args))
+wait()
+end
+end)
+end
+
+function AutoWorlds(world)
+    if game:GetService("Workspace").Worlds:FindFirstChild(world) then
+    local args = {[1] = "world",[2] = world}
+RemotePath.RequestTeleport:InvokeServer(unpack(args))
+end
+end
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()    
+local Window = Library.CreateLib("DON X HUB", "Ocean")
+local Tab = Window:NewTab("Auto Click")
+local Section = Tab:NewSection("Auto Click")
+
+Section:NewToggle("Auto Click", " ", function(state)
+   AutoClick = state
+    if state then
+        doTap();
+    end
+end)
+
+local Tab = Window:NewTab("Auto Rebirth")
+local Section = Tab:NewSection("Auto Rebirth")
+
+local SelectRebirth;
+
+Section:NewDropdown("Rebirth List", " ", {1, 5, 15, 25, 50, 75, 100, 500, 1500, 2500, 5000, 7500, 10000, 50000, 150000, 250000, 500000, 750000, 1000000, 5000000, 15000000, 25000000, 50000000, 75000000}, function(value)
+    SelectRebirth = value;
+end)
+
+Section:NewToggle("Auto Rebirth", " ", function(state)
+    getgenv().AutoRebirth = state
+    if state and SelectRebirth then
+        AutoRebirth(SelectRebirth);
+    end
+end)
+
+local Tab = Window:NewTab("Auto Egg")
+local Section = Tab:NewSection(" ")
+
+local SelectEgg
+
+Section:NewDropdown("Rebirth List", " ", {"Dragon Star", "Pirate Star", "Slayer Star","Nine Tailed Star"}, function(value)
+    SelectEgg = value;
+end)
+
+Section:NewToggle("Buy Egg", " ", function(state)
+    getgenv().AutoHatch = state
+    if state then
+        AutoHatch(SelectEgg);
+    end
+end)
+
+local Tab = Window:NewTab("Auto Worlds")
+local Section = Tab:NewSection(" ")
+
+local selectedWorld;
+
+Section:NewDropdown("World list", " ", {"Anime Village","Pirate Docks", "Purple Forest", "Shinobi Village", "Spirit Society", "Walled City", "Narmek", "Hero Academy", "Stand City", "Hunter Kingdom", "Jiu Jitsu Sewers", "The Sin Zone", "Walled of Fate"}, function(value)
+    selectedWorld = value;
+    print(value)
+end)
+
+Section:NewButton("Teleport World", " ", function()
+    if selectedWorld then
+     AutoWorlds(selectedWorld);
+    end
+end)
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Anime Clickers Simulator Script";
+    Text = "Make by Feisogood#9094";
+    Duration = 5;
+})
+wait(1)
+game.StarterGui:SetCore("SendNotification", {
+    Title = "DON X ANIME";
+    Text = "Active"; 
+    Duration = 5;
+})
